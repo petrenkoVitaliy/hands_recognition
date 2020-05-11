@@ -5,7 +5,8 @@ import {
   MODIFIED_LIGHT_CONFIG,
   MODIFIED_LIGHT_CONFIG2,
 } from "./configs";
-import { HAND_SIDE } from "./base_config";
+
+import { MODEL_NAMES, MODELS } from "./base_config";
 
 export const CONFIGS = {
   DEFAULT_CONFIG,
@@ -14,4 +15,5 @@ export const CONFIGS = {
   MODIFIED_LIGHT_CONFIG,
   MODIFIED_LIGHT_CONFIG2,
 };
-export { HAND_SIDE };
+
+export { MODEL_NAMES, MODELS };

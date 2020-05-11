@@ -1,6 +1,13 @@
-export const HAND_SIDE = {
-  FRONT: "front",
-  BACK: "back",
+import modelSpokeObj from "../../model_data/hand-spoke_model.obj";
+import modelDefaultObj from "../../model_data/hand_model.OBJ";
+
+export const MODEL_NAMES = {
+  SPOKE: "spoke",
+  DEFAULT: "default",
+};
+export const MODELS = {
+  [MODEL_NAMES.SPOKE]: modelSpokeObj,
+  [MODEL_NAMES.DEFAULT]: modelDefaultObj,
 };
 
 export const CONFIG = {
@@ -52,10 +59,11 @@ export const CONFIG = {
   },
 
   rotation: {
-    anglesLimits: {
-      [HAND_SIDE.FRONT]: [-1, 1],
-      [HAND_SIDE.BACK]: [2, 4],
-    },
+    anglesLimits: [
+      [-1, 1],
+      [2, 4],
+    ],
+
     fps: 60,
     anglrStep: 0.01,
 

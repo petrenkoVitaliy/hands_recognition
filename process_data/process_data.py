@@ -1,48 +1,55 @@
-import numpy as np
+import numpy
 import os
 import matplotlib.pyplot as plt
 import cv2
 import random
 import pickle
 
-DATA_PATH = './hands_photos'  # From root
+IMG_SIZE = 120
+VERSION = "spoke_gray_white120_20-20"
+CROPPING = [0, 0]
 
-MALE_NAME = 'male'
-FEMALE_NAME = 'female'
-IMG_SIZE = 50
+IS_GENERATE = True
 
-def get_filenames():
-    femaleFilenames = []
-    maleFilenames = []
-    handInfoFile = open('HandInfo.txt', 'r')
-    for line in handInfoFile.readlines():
-        sex = line.strip().split(',')[2]
-        filename = line.strip().split(',')[7]
+# run .py from current folder
+DATADIR = '../synthetic_photos'
+CATEGORIES = ["spoke", "default"]
 
-        if sex == MALE_NAME:
-            maleFilenames.append(filename)
-        if sex == FEMALE_NAME:
-            femaleFilenames.append(filename)
-
-    return [femaleFilenames, maleFilenames]
 
 def create_training_data():
     training_data = []
-    [femaleFilenames, maleFilenames] = get_filenames()
-    filenames_by_categories = [maleFilenames, femaleFilenames]
+    ind = 0
+    for category in CATEGORIES:
+        path = DATADIR + '/' + category
+        class_num = CATEGORIES.index(category)
+        print('----category', category)
+        for img in os.listdir(path):
 
-    for category_num in range(len(filenames_by_categories)):
-        filenames = filenames_by_categories[category_num]
-        print('--cat', category_num)
-        for img in filenames:
-            img_array = cv2.imread(os.path.join(DATA_PATH, img), cv2.IMREAD_GRAYSCALE)
+            img_array = cv2.imread(
+                os.path.join(path, img),
+                cv2.IMREAD_GRAYSCALE
+            )
 
-            new_array  = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
-            training_data.append([new_array, category_num])
+            img_array = 255 - img_array
+            resized_image_array = cv2.resize(
+                img_array,
+                (IMG_SIZE, IMG_SIZE)
+            )
+
+            crop_img_array = resized_image_array[CROPPING[0]:IMG_SIZE - CROPPING[0],
+                                                 CROPPING[1]:IMG_SIZE - CROPPING[1]]
+
+            training_data.append([crop_img_array, class_num])
+            ind += 1
+
+        #     plt.imshow(crop_img_array, cmap="gray")
+        #     plt.show()
+        #     break
+        # break
 
     random.shuffle(training_data)
-    
     return training_data
+
 
 def parse_training_data(training_data):
     X = []
@@ -52,22 +59,30 @@ def parse_training_data(training_data):
         X.append(features)
         y.append(label)
 
-    X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
-    
+    X = numpy.array(X).reshape(-1,
+                               IMG_SIZE-2*CROPPING[0],
+                               IMG_SIZE-2*CROPPING[1],
+                               1
+                               )
+
     return [X, y]
 
-##-------------
+
+def create_dump_files(version, X, y):
+    pickle_out = open("X_" + version + ".pickle", "wb")
+    pickle.dump(X, pickle_out)
+    pickle_out.close()
+
+    pickle_out = open("y_" + version + ".pickle", "wb")
+    pickle.dump(y, pickle_out)
+    pickle_out.close()
+
+# ---------------------
+
 
 training_data = create_training_data()
 [X, y] = parse_training_data(training_data)
+if IS_GENERATE:
+    create_dump_files(VERSION, X, y)
 
-pickle_out = open("X.pickle", "wb")
-pickle.dump(X, pickle_out)
-pickle_out.close()
-
-pickle_out = open("y.pickle", "wb")
-pickle.dump(y, pickle_out)
-pickle_out.close()
- 
-pickle_in = open("X.pickle", "rb")
-X = pickle.load(pickle_in)
+print(len(training_data))

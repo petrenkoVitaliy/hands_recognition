@@ -1,14 +1,19 @@
 /**
-  tip: this code was legasy even at the planning stage... don't try to understand it 
+  tip: this code was legacy even at the planning stage... don't try to understand it 
 */
 import * as THREE from "three";
 import { OBJLoader2 } from "three/examples/jsm/loaders/OBJLoader2";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
-import modelObj from "../../model_data/hand_model.OBJ";
 import modelTexture from "../../model_data/hand_map.jpg";
+import { CONFIGS, MODEL_NAMES, MODELS } from "../config";
 
-import { CONFIGS, HAND_SIDE } from "../config/index"; //wtf??
+// DEFAULT_CONFIG,
+// TOP_CONFIG,
+// BOTTOM_CONFIG,
+// MODIFIED_LIGHT_CONFIG,
+// MODIFIED_LIGHT_CONFIG2,
+const currentModel = MODEL_NAMES.SPOKE;
+const modelObj = MODELS[currentModel];
 
 const CONFIG_TYPE = "MODIFIED_LIGHT_CONFIG2";
 const CONFIG = CONFIGS[CONFIG_TYPE];
@@ -17,29 +22,36 @@ export function threeJs(ref) {
   const scene = new THREE.Scene();
 
   const [camera, renderer] = loadCanvas(scene, ref);
-  loadEnviroment(scene);
+  loadEnvironment(scene);
   loadHemisphereLight(scene);
   loadDirectionalLight(scene);
   loadModel(scene);
 
-  const initIndex = 2005; //ok
-  const handSige = HAND_SIDE.FRONT;
+  const initIndex = 1604;
+
+  const { rotation: rotationConfig } = CONFIG;
+  const [frontAngles, backAngles] = rotationConfig.anglesLimits;
   const isDownloadingImages = 0;
 
   let index = initIndex;
-  const { angleMin, angleMax } = getHangLimits(handSige);
   const savedImages = [];
 
   function render(angle) {
     const { rotation: rotationConfig } = CONFIG;
     resizeRendererToDisplaySize(renderer, camera);
 
-    if (angle < angleMin || angle > angleMax) {
+    if (angle < frontAngles[0]) {
+      angle = frontAngles[0];
+    }
+    if (angle > frontAngles[1] && angle < backAngles[0]) {
+      angle = backAngles[0];
+    }
+    if (angle > backAngles[1]) {
+      angle = frontAngles[0];
+
       if (isDownloadingImages) {
-        downloadImages(initIndex, savedImages, handSige);
+        downloadImages(initIndex, savedImages, currentModel);
         return;
-      } else {
-        angle = angleMin;
       }
     }
 
@@ -53,20 +65,10 @@ export function threeJs(ref) {
     }, 1000 / rotationConfig.fps);
   }
 
-  render(angleMin);
+  render(frontAngles[0]);
 }
 
 //----------------------------------
-function getHangLimits(side) {
-  const { rotation: rotationConfig } = CONFIG;
-  const handsLimits = rotationConfig.anglesLimits[side];
-
-  return {
-    angleMin: handsLimits[0],
-    angleMax: handsLimits[1],
-  };
-}
-
 function saveImage(renderer, index) {
   const { mode } = CONFIG;
 
@@ -75,7 +77,7 @@ function saveImage(renderer, index) {
   return { image, name };
 }
 
-function downloadImages(initIndex, savedImages, handSige) {
+function downloadImages(initIndex, savedImages, className) {
   let result = "";
 
   const downloadImage = (index) => {
@@ -91,7 +93,7 @@ function downloadImages(initIndex, savedImages, handSige) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    result += `${index + initIndex},${name},${handSige}\n`;
+    result += `${index + initIndex},${name},${className}\n`;
 
     setTimeout(() => downloadImage(index + 1), 100);
   };
@@ -127,12 +129,12 @@ function resizeRendererToDisplaySize(renderer, camera) {
   }
 }
 
-function loadEnviroment(scene) {
-  const { enviroment: enviromentConfig } = CONFIG;
+function loadEnvironment(scene) {
+  const { enviroment: environmentConfig } = CONFIG;
 
   const loader = new THREE.TextureLoader();
-  const texture = loader.load(enviromentConfig.texture);
-  const repeats = enviromentConfig.planeSize / 2;
+  const texture = loader.load(environmentConfig.texture);
+  const repeats = environmentConfig.planeSize / 2;
 
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
@@ -140,8 +142,8 @@ function loadEnviroment(scene) {
   texture.repeat.set(repeats, repeats);
 
   const planeGeo = new THREE.PlaneBufferGeometry(
-    enviromentConfig.planeSize,
-    enviromentConfig.planeSize
+    environmentConfig.planeSize,
+    environmentConfig.planeSize
   );
 
   const planeMat = new THREE.MeshPhongMaterial({
@@ -150,7 +152,7 @@ function loadEnviroment(scene) {
   });
 
   const mesh = new THREE.Mesh(planeGeo, planeMat);
-  mesh.rotation.x = enviromentConfig.rotationX;
+  mesh.rotation.x = environmentConfig.rotationX;
   scene.add(mesh);
 }
 
