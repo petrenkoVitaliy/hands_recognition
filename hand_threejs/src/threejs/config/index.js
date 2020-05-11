@@ -1,0 +1,17 @@
+import {
+  DEFAULT_CONFIG,
+  TOP_CONFIG,
+  BOTTOM_CONFIG,
+  MODIFIED_LIGHT_CONFIG,
+  MODIFIED_LIGHT_CONFIG2,
+} from "./configs";
+import { HAND_SIDE } from "./base_config";
+
+export const CONFIGS = {
+  DEFAULT_CONFIG,
+  TOP_CONFIG,
+  BOTTOM_CONFIG,
+  MODIFIED_LIGHT_CONFIG,
+  MODIFIED_LIGHT_CONFIG2,
+};
+export { HAND_SIDE };

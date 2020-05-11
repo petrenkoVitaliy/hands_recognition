@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { threeJs } from "./ThreeJs";
+import { threeJs } from "./threejs/scene";
 
-class App extends Component {
+export default class App extends Component {
   componentDidMount() {
     threeJs(this.mount);
   }
@@ -10,4 +10,3 @@ class App extends Component {
     return <div ref={(ref) => (this.mount = ref)} />;
   }
 }
-export default App;
