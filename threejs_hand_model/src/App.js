@@ -1,12 +1,41 @@
 import React, { Component } from "react";
-import { threeJs } from "./threejs/scene";
+import { Formik } from "formik";
+
+import { MODEL_NAMES, CONFIGS_LIST } from "./threejs/config";
+
+import Dashboard from "./Dashboard";
+
+const currentModelOptions = Object.entries(MODEL_NAMES).map(
+  ([label, value]) => ({
+    value,
+    label,
+  })
+);
+
+const configTypeOptions = CONFIGS_LIST.map((value) => ({
+  value,
+  label: value,
+}));
 
 export default class App extends Component {
-  componentDidMount() {
-    threeJs(this.mount);
-  }
-
   render() {
-    return <div ref={(ref) => (this.mount = ref)} />;
+    return (
+      <Formik
+        initialValues={{
+          configType: CONFIGS_LIST[0],
+          currentModel: MODEL_NAMES.SPOKE,
+        }}
+      >
+        {({ values, setFieldValue, handleSubmit }) => (
+          <Dashboard
+            values={values}
+            setFieldValue={setFieldValue}
+            handleSubmit={handleSubmit}
+            currentModelOptions={currentModelOptions}
+            configTypeOptions={configTypeOptions}
+          />
+        )}
+      </Formik>
+    );
   }
 }

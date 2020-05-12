@@ -1,20 +1,19 @@
 import pickle
 import matplotlib.pyplot as plt
 
-VERSION = "spoke_gray_white120_20-20"
 IMG_SIZE = 120
-CROPPING = [20, 20]
+VERSION = "synth_gray_120-0"
+CROPPING = [0, 0]
 
-
-INDEX = 1
+INDEX = 100
 
 
 def parseData():
-    filename = "X_" + VERSION + ".pickle"
+    filename = "./pickle/X_" + VERSION + ".pickle"
     pickle_in = open(filename, "rb")
     X = pickle.load(pickle_in)
 
-    filename = "y_" + VERSION + ".pickle"
+    filename = "./pickle/y_" + VERSION + ".pickle"
     pickle_in = open(filename, "rb")
     y = pickle.load(pickle_in)
 

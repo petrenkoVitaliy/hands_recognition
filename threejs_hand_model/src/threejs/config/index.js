@@ -16,4 +16,8 @@ export const CONFIGS = {
   MODIFIED_LIGHT_CONFIG2,
 };
 
+export const CONFIGS_LIST = Object.keys(CONFIGS).map(
+  (configName) => configName
+);
+
 export { MODEL_NAMES, MODELS };

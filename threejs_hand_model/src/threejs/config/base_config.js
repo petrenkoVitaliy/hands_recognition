@@ -20,7 +20,7 @@ export const CONFIG = {
     aspect: 2,
     near: 0.1,
     far: 100,
-    backgroundColor: "black",
+    backgroundColor: "white",
   },
 
   directionalLight: {

@@ -6,7 +6,7 @@ import random
 import pickle
 
 IMG_SIZE = 120
-VERSION = "spoke_gray_white120_20-20"
+VERSION = "synth_gray_120-0"
 CROPPING = [0, 0]
 
 IS_GENERATE = True
@@ -30,7 +30,7 @@ def create_training_data():
                 cv2.IMREAD_GRAYSCALE
             )
 
-            img_array = 255 - img_array
+            #img_array = 255 - img_array
             resized_image_array = cv2.resize(
                 img_array,
                 (IMG_SIZE, IMG_SIZE)
@@ -69,11 +69,11 @@ def parse_training_data(training_data):
 
 
 def create_dump_files(version, X, y):
-    pickle_out = open("X_" + version + ".pickle", "wb")
+    pickle_out = open("./pickle/X_" + version + ".pickle", "wb")
     pickle.dump(X, pickle_out)
     pickle_out.close()
 
-    pickle_out = open("y_" + version + ".pickle", "wb")
+    pickle_out = open("./pickle/y_" + version + ".pickle", "wb")
     pickle.dump(y, pickle_out)
     pickle_out.close()
 
