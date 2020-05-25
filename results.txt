@@ -1,0 +1,13 @@
+# white back
+#synthphotos_gray_120-0           #1     0.2
+#synthphotos_gray_gaussian_220-0  #0.48  0.21
+
+# textured back
+#synthphotos1_gray_120-0          #0.52  0.78
+#synthphotos1_gray_gaussian_220-0 #0.47  0.21
+
+# mixed back
+#synthphotos2_gray_120-0          #0.76  0.21
+#synthphotos2_gray_gaussian_120-0 #0.74  0.21
+
+#synthphotos2_gray_gaussian_220-0 # crash memory

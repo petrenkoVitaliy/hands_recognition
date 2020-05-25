@@ -1,13 +1,16 @@
 import modelSpokeObj from "../../model_data/hand-spoke_model.obj";
 import modelDefaultObj from "../../model_data/hand_model.OBJ";
+import modelSimpleObj from "../../model_data/simple_2.obj";
 
 export const MODEL_NAMES = {
   SPOKE: "spoke",
   DEFAULT: "default",
+  SIMPLE: "simple",
 };
 export const MODELS = {
   [MODEL_NAMES.SPOKE]: modelSpokeObj,
   [MODEL_NAMES.DEFAULT]: modelDefaultObj,
+  [MODEL_NAMES.SIMPLE]: modelSimpleObj,
 };
 
 export const CONFIG = {
@@ -49,8 +52,11 @@ export const CONFIG = {
   },
 
   enviroment: {
-    //planeSize: 40,
-    texture: "", //https://threejsfundamentals.org/threejs/resources/images/checker.png
+    planeSize: 0,
+    texture:
+      //"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRz5Kb14xfZqJ6tn4um89LrIu1pj1GvCpBmz4MjKJSG0upwbvZM&usqp=CAU",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRoyi6kR6WXNBQtbNBCFjXZ20mVYuK5h6IAT1_EOjBb5I5Fj-qs&usqp=CAU",
+    //"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQjCwyor7RBevslmGefydtbHMsEOgDdgA7k8E0xU5DgRB1J3otM&usqp=CAU",
     rotationX: Math.PI * -0.5,
   },
 

@@ -40,3 +40,12 @@ export function downloadObject(savedImages, currentModel, configMode) {
   elem.click();
   document.body.removeChild(elem);
 }
+
+export function mergeLightConfig(config, lightConfig) {
+  return {
+    ...config,
+    directionalLight: { ...lightConfig.directionalLight },
+    enviroment: { ...lightConfig.enviroment },
+    mode: `${config.mode}__${lightConfig.mode}`,
+  };
+}

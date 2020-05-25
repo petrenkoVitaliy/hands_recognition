@@ -1,11 +1,12 @@
 import pickle
 import matplotlib.pyplot as plt
+import numpy
 
 IMG_SIZE = 120
-VERSION = "synth_gray_120-0"
+VERSION = "synthphotos1_gray_120-0"
 CROPPING = [0, 0]
 
-INDEX = 100
+INDEX = 1006
 
 
 def parseData():
@@ -29,5 +30,8 @@ X_init = X.reshape(
     IMG_SIZE-2*CROPPING[1],
 )[INDEX]
 
-plt.imshow(X_init[0], cmap="gray")
+image = X_init[0]
+
+
+plt.imshow(image, cmap="gray")
 plt.show()

@@ -13,14 +13,14 @@ async function writeImages(images) {
     const base64Data = image.replace(/^data:image\/png;base64,/, "");
 
     await fs.writeFile(
-      `../synthetic_photos/${imageClass}/${name}.png`,
+      `../synthetic_photos_1/${imageClass}/${name}.png`,
       base64Data,
       "base64"
     );
   }
 }
 
-const filename = "savedImages_default_modified_light_2.json";
+const filename = "savedImages_default_top2__composed_light_texture.json";
 const images = JSON.parse(require("fs").readFileSync(filename));
 
 writeImages(images);

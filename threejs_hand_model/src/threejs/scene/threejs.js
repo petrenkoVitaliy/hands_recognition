@@ -4,24 +4,22 @@
 import * as THREE from "three";
 
 import modelTexture from "../../model_data/hand_map.jpg";
-import { CONFIGS, MODEL_NAMES, MODELS } from "../config";
+import { CONFIGS, MODELS, LIGHT_CONFIGS } from "../config";
 import { SceneRenders } from "./sceneRenders/index";
-import { saveImage, downloadObject } from "./helpers";
-
-// DEFAULT_CONFIG,
-// TOP_CONFIG,
-// BOTTOM_CONFIG,
-// MODIFIED_LIGHT_CONFIG,
-// MODIFIED_LIGHT_CONFIG2,
+import { saveImage, downloadObject, mergeLightConfig } from "./helpers";
 
 export function createScene(
   ref,
-  CONFIG_TYPE = "MODIFIED_LIGHT_CONFIG2",
-  currentModel = MODEL_NAMES.SPOKE,
+  CONFIG_TYPE,
+  LIGHT_TYPE,
+  currentModel,
   isDownloadingImages = false,
   updateProgressStatus = () => {}
 ) {
-  const CONFIG = CONFIGS[CONFIG_TYPE];
+  const CONFIG = mergeLightConfig(
+    CONFIGS[CONFIG_TYPE],
+    LIGHT_CONFIGS[LIGHT_TYPE]
+  );
   const modelObj = MODELS[currentModel];
 
   const scene = new THREE.Scene();
@@ -38,12 +36,13 @@ export function createScene(
     canvasContainer.removeChild(canvasContainer.childNodes[0]);
 
   const [camera, renderer] = loadCanvas(ref);
+  const initLight = loadDirectionalLight("");
   loadEnvironment();
   loadHemisphereLight();
-  loadDirectionalLight();
   loadModel(modelObj, modelTexture);
 
   let isActive = true;
+  const rerenderLight = (light = initLight) => loadDirectionalLight(light);
 
   getRender(
     CONFIG,
@@ -54,7 +53,8 @@ export function createScene(
     scene,
     currentModel,
     () => isActive,
-    updateProgressStatus
+    updateProgressStatus,
+    rerenderLight
   )();
 
   return () => (isActive = false);
@@ -69,7 +69,8 @@ function getRender(
   scene,
   currentModel,
   isActive,
-  updateProgressStatus
+  updateProgressStatus,
+  rerenderLight
 ) {
   const { rotation: rotationConfig } = CONFIG;
   const [frontAngles, backAngles] = rotationConfig.anglesLimits;
@@ -80,6 +81,7 @@ function getRender(
 
   const savedImages = [];
   let index = 0;
+  let light;
 
   const render = (angle = frontAngles[0]) => {
     const { rotation: rotationConfig, mode } = CONFIG;
@@ -108,15 +110,21 @@ function getRender(
       updateProgressStatus(Math.floor(index / progressNextStep));
     }
 
+    light = rerenderLight(light);
     const nextAngle = rotateThisFckHand(angle, camera);
     renderer.render(scene, camera);
 
     savedImages.push(saveImage(renderer, index, mode));
     index++;
+
     if (isActive()) {
-      setTimeout(function () {
-        requestAnimationFrame(() => render(nextAngle));
-      }, 1000 / rotationConfig.fps);
+      setTimeout(
+        () =>
+          setTimeout(function () {
+            requestAnimationFrame(() => render(nextAngle));
+          }, 1000 / rotationConfig.fps),
+        isDownloadingImages && index === 2 ? 1000 : 0
+      );
     } else {
       return;
     }

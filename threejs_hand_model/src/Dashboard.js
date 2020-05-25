@@ -20,13 +20,13 @@ export default class Dashboard extends Component {
 
   changeSceneConfig = (isDownloadable = false) => {
     const {
-      values: { configType, currentModel },
+      values: { configType, currentModel, lightType },
     } = this.props;
-
     this.stopScene && this.stopScene();
     this.stopScene = createScene(
       this.mount,
       configType,
+      lightType,
       currentModel,
       isDownloadable,
       this.updateProgressStatus
@@ -39,6 +39,7 @@ export default class Dashboard extends Component {
       setFieldValue,
       currentModelOptions,
       configTypeOptions,
+      lightTypeOptions,
     } = this.props;
     const { progressStatus } = this.state;
 
@@ -74,6 +75,20 @@ export default class Dashboard extends Component {
                     : ""
                 }
                 onChange={(option) => setFieldValue("configType", option.value)}
+              />
+            </div>
+            <div className="formItem">
+              <Select
+                options={lightTypeOptions}
+                name="lightType"
+                value={
+                  lightTypeOptions
+                    ? lightTypeOptions.find(
+                        (option) => option.value === values.lightType
+                      )
+                    : ""
+                }
+                onChange={(option) => setFieldValue("lightType", option.value)}
               />
             </div>
             <div className="formButton">

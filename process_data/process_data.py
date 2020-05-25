@@ -4,15 +4,16 @@ import matplotlib.pyplot as plt
 import cv2
 import random
 import pickle
+import skimage
 
 IMG_SIZE = 120
-VERSION = "synth_gray_120-0"
+VERSION = "synthphotos2_gray_gaussian_120-0"
 CROPPING = [0, 0]
 
 IS_GENERATE = True
 
 # run .py from current folder
-DATADIR = '../synthetic_photos'
+DATADIR = '../synthetic_photos_2'
 CATEGORIES = ["spoke", "default"]
 
 
@@ -30,7 +31,6 @@ def create_training_data():
                 cv2.IMREAD_GRAYSCALE
             )
 
-            #img_array = 255 - img_array
             resized_image_array = cv2.resize(
                 img_array,
                 (IMG_SIZE, IMG_SIZE)
@@ -39,12 +39,16 @@ def create_training_data():
             crop_img_array = resized_image_array[CROPPING[0]:IMG_SIZE - CROPPING[0],
                                                  CROPPING[1]:IMG_SIZE - CROPPING[1]]
 
+            # gimg = skimage.util.random_noise(
+            #     crop_img_array, mode="gaussian", var=0.0005)
+
             training_data.append([crop_img_array, class_num])
             ind += 1
 
-        #     plt.imshow(crop_img_array, cmap="gray")
-        #     plt.show()
-        #     break
+            # var=0.0005  0.01
+            # plt.imshow(gimg, cmap="gray")
+            # plt.show()
+            # break
         # break
 
     random.shuffle(training_data)

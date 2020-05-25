@@ -35,24 +35,26 @@ export function loadEnvironment(CONFIG, scene) {
 
   const loader = new THREE.TextureLoader();
   const texture = loader.load(environmentConfig.texture);
-  const repeats = environmentConfig.planeSize / 2;
+  const repeats = environmentConfig.planeSize / 300;
 
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.magFilter = THREE.NearestFilter;
   texture.repeat.set(repeats, repeats);
 
-  const planeGeo = new THREE.PlaneBufferGeometry(
-    environmentConfig.planeSize,
-    environmentConfig.planeSize
-  );
-
   const planeMat = new THREE.MeshPhongMaterial({
     map: texture,
-    side: THREE.DoubleSide,
+    side: THREE.BackSide,
   });
+  let planeGeo;
+  if (environmentConfig.planeSize) {
+    planeGeo = new THREE.CylinderGeometry(10, 80, 1000, 1000);
+    planeGeo.translate(0, -50, 0);
+    planeGeo.rotateX(-Math.PI * 0.5);
+  }
 
   const mesh = new THREE.Mesh(planeGeo, planeMat);
+  mesh.envMap = 1000;
   mesh.rotation.x = environmentConfig.rotationX;
   scene.add(mesh);
 }
@@ -89,18 +91,42 @@ export function loadHemisphereLight(CONFIG, scene) {
   scene.add(light);
 }
 
-export function loadDirectionalLight(CONFIG, scene) {
+export function loadDirectionalLight(prevLight, CONFIG, scene) {
+  if (prevLight) {
+    scene.remove(prevLight);
+  }
   const { directionalLight: directionalLightConfig } = CONFIG;
+  const randomColor = `#${"0123456789abcdef"
+    .split("")
+    .map(function (v, i, a) {
+      return i > 5 ? null : a[Math.floor(Math.random() * 16)];
+    })
+    .join("")}`;
+
+  const configLightColor = directionalLightConfig.lightColor;
+  const lightColor = Array.isArray(configLightColor)
+    ? randomColor
+    : configLightColor;
+
+  const configLightTargetPosition = directionalLightConfig.lightTargetPosition;
+
+  const randomPosition = Math.floor(Math.random() * 200) - 100;
+  const lightTargetPosition = !configLightTargetPosition[0]
+    ? [randomPosition, 0, 0]
+    : configLightTargetPosition;
 
   const light = new THREE.DirectionalLight(
-    directionalLightConfig.lightColor,
+    lightColor,
     directionalLightConfig.lightIntensity
   );
 
   light.position.set(...directionalLightConfig.lightPosition);
-  light.target.position.set(...directionalLightConfig.lightTargetPosition);
+  light.target.position.set(...lightTargetPosition);
+
   scene.add(light);
   scene.add(light.target);
+
+  return light;
 }
 
 export function loadModel(modelObj, modelTexture, CONFIG, scene) {
