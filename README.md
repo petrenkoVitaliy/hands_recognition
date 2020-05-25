@@ -1,5 +1,5 @@
 # hands_recognition
-### ./model -> neural model train module
+### ./model -> neural model train module (using in colab.ipynb)
 
 ### ./process_data -> convert imgs to pickle module
 
